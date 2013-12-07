@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FEAP Test Suite [Mocha]</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="lib/css/mocha.css" />
+    <script src="lib/jquery.js"></script>
+    <script src="lib/expect.js"></script>
+    <script src="lib/mocha.js"></script>
+    <script src="lib/sinon.js"></script>
+
+    <script>
+      mocha.setup('bdd')
+    </script>
+
+    <script src="matrixUtil/src/matrixUtil.js"></script>
+    <script src="src/mesh.js"></script>
+    <script src="src/fesolve.js"></script>
+    <script src="src/feap.js"></script>
+    <script src="spec/feapSpec.js"></script>
+
+    <script>
+      onload = function(){
+        mocha.run();
+      };
+    </script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+  </body>
+</html>
