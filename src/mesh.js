@@ -21,11 +21,9 @@ var InputParameters = function(){
                           [0, 12],
                           [10, 12],
                           [14, 12]]);
-
   x.scalarMultiply(12);
   this.x = x.getMatrix();
 
-   
   //define element conductivities e(i,j) where
   // j =1   local node number (1) for element i
   // j = 2 - local node number (2) for element i
@@ -33,10 +31,8 @@ var InputParameters = function(){
   // elem = [1 2 1
   //         2 3 1
   //         1 3 1];
-  this.elem = [[1, 3, 1]
-               [2,4,1],
-               [3,4,2],
-               [4,5,1]];
+  this.elem = [[1, 3, 1],[2, 4, 1],[3, 4, 2],[4, 5, 1]];
+
 
   // define the material properties d(i,j) where 
   // i - material number 
@@ -46,7 +42,7 @@ var InputParameters = function(){
   // var d = [[29000, 3, 0, 0, 0, 0.0000065, 285, 10, 0, 0],
   //          [29000, 3, 0, -.2, 80, 0.0000065, 285, 10, 100, 60],
   //          [29000, 3, 0, 0, 0, 0.000065, 285, 10, 0, 0]];
-  this.materialProperties = {
+  this.materialProperties = [{
     E: 29000, 
     area: 3,
     wx: 0,
@@ -57,7 +53,7 @@ var InputParameters = function(){
     height: 10,
     t1: 0,
     t2:0
-  };
+  }];
 
    
    // define boundary conditions bc(i,j) where
