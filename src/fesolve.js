@@ -18,13 +18,15 @@ var FESolve = function(inputParameters){
   var ndof = inputParameters.ndof;
   var elem = inputParameters.elem;
   var bc = inputParameters.bc;
+  var aib= [];
+  var dc = inputParameters.dc;
 
 
   var dArr = [];
   for(var i = 0; i < numnp*inputParameters.ndof; i++){
-    dArr.push([0]);
+    dArr.push(0);
   }
-  var D = new MatrixUtil(dArr);//zeros(numnp*ndof,1);
+  
 
 
   // //  define Id array
@@ -94,7 +96,6 @@ var FESolve = function(inputParameters){
       ib[ndof*bc[i][0]-1] = 1;
     }
   }
-  console.log(ib);
 
 
   // // finds the active dofs
@@ -102,12 +103,19 @@ var FESolve = function(inputParameters){
   // for i =1:numnp*ndof
   //     if ib(i) == 0
   //         j = j+1;
-  //         aib(j) = i;
+  //         aib(j) = i; 
   //     end
   // end
   // nact = j;
-      
-      
+
+  for(i = 0; i < numnp*ndof; i++){
+    if(ib[i]===0){
+      aib.push(i);
+    }
+  }
+  nact = aib.length;
+
+
 
   // // set non-zero displacement conditions
   // if dispflg ==1
@@ -127,8 +135,24 @@ var FESolve = function(inputParameters){
   //     end
   //     ndsp = j;
   // end
+  var aid = [];
 
-
+  if(dispflg){
+    // debugger
+    for(i = 0; i < ndc; i++){
+      console.log(dc[i][1]) //1 7 13
+      dArr[(ndof)*dc[i][0]-2] = dc[i][1]
+      dArr[(ndof)*dc[i][0]-1] = dc[i][2]
+      dArr[(ndof)*dc[i][0]] = dc[i][3]
+    }
+    for(i = 0; i < numnp*ndof; i++){
+      if(ib[i] < 0){
+        aid.push(i);
+      }
+    }
+    ndsp = aid.length;
+  }
+  dArr.shift()
 
   // // set nodal forces 
   // F = zeros(numnp*ndof,1);
