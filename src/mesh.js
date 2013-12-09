@@ -70,7 +70,7 @@ var InputParameters = function(){
       
    // define the nodal forces fc (i,j) where
    // Node, x force, y force, moment
-   this.fc = [4, 0, 2, 0];
+   this.fc = [[4, 0, 2, 0]];
    
    // define nodal displacements dc (i ,j) where
    // Node, x disp, ydisp, rotation

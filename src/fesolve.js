@@ -20,6 +20,7 @@ var FESolve = function(inputParameters){
   var bc = inputParameters.bc;
   var aib= [];
   var dc = inputParameters.dc;
+  var fc = inputParameters.fc;
 
 
   var dArr = [];
@@ -161,6 +162,15 @@ var FESolve = function(inputParameters){
   //     F(ndof*fc(j,1)-1) = fc(j,3);
   //     F(ndof*fc(j,1)-0) = fc(j,4);
   // end
+  var F = [];
+  for(i = 0; i < numnp*ndof; i++){
+    F.push(0);
+  }
+  for(i = 0; i < nfc ; i++){
+    F[ndof*fc[i][0]-3] = fc[i][1];
+    F[ndof*fc[i][0]-2] = fc[i][2];
+    F[ndof*fc[i][0]-1] = fc[i][3];
+  }
 
   // //  for i=1:numnp*ndof
   // //      F(i) = 0;
