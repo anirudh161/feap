@@ -235,11 +235,26 @@ var FESolve = function(inputParameters){
         xe[i][j] = x[elem[e][i]-1][j];
       }
     }
-    ////[Ke,F0e,fe] = elem02(xe,de,de,nen,ndof,3);
-    // console.log(inputParameters.materialProperties[elem[e,2]])
-    elemSolve(xe, inputParameters.materialProperties[elem[e][2]-1], inputParameters.materialProperties, nen, ndof, 3);
+  var localMatrices = elemSolve(xe, inputParameters.materialProperties[elem[e][2]-1], inputParameters.materialProperties, nen, ndof, 3);
 
+  for(i = 0 ; i < nen*ndof ; i++){
+    
   }
+
+  //     for i =1:nen*ndof
+  //         for j=1: nen*ndof
+  //             K(id(e,i),id(e,j)) = K(id(e,i),id(e,j)) + Ke(i,j);
+  //         end
+  //             F(id(e,i)) = F(id(e,i)) - F0e(i);
+  //             Fr(id(e,i)) = Fr(id(e,i))-F0e(i);
+  //     end
+  // end
+  // Fr = -Fr;
+  }
+
+
+
+
 
 
 
