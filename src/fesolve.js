@@ -6,14 +6,15 @@ var FESolve = function(inputParameters){
 
   //  compute variables for subsequent use
   var numnp = inputParameters.x.length; //size(x,1);  //  number of nodal points
+  var x = inputParameters.x;
   var nume1 = inputParameters.elem.length; //size(elem,1);  //  number of elements
   var nen =  1; //note 0 index //size(elem,2)-1; //  number of nodes per elmeent
   var nbc = inputParameters.bc.length;  //size(bc,1) ;   //  number of boundary nodes
   var nfc = inputParameters.fc.length; //size(fc,1); // number of force nodes
   var ndc = inputParameters.dc.length; //size(dc,1); //  number of non-zero displacement nodes
-  var ndm = 2; //size(x,2); //  dimension of space
+  var ndm = 1; //note 0 index //size(x,2); //  dimension of space
   var nummat = inputParameters.materialProperties.length;//size(d,1);  //  number of material sets
-  var mrecords = 10;//size(d,2); //  number of material properties/set
+  var mrecords = inputParameters.materialProperties.length;//size(d,2); //  number of material properties/set
   var dispflg = 0; // initialize flag
   var ndof = inputParameters.ndof;
   var elem = inputParameters.elem;
@@ -27,8 +28,6 @@ var FESolve = function(inputParameters){
   for(var i = 0; i < numnp*inputParameters.ndof; i++){
     dArr.push(0);
   }
-  
-
 
   // //  define Id array
   // for e =1 : nume1
@@ -141,7 +140,6 @@ var FESolve = function(inputParameters){
   if(dispflg){
     // debugger
     for(i = 0; i < ndc; i++){
-      console.log(dc[i][1]) //1 7 13
       dArr[(ndof)*dc[i][0]-2] = dc[i][1]
       dArr[(ndof)*dc[i][0]-1] = dc[i][2]
       dArr[(ndof)*dc[i][0]] = dc[i][3]
@@ -197,7 +195,6 @@ var FESolve = function(inputParameters){
   //             xe(i,j) = x(elem(e,i),j);
   //         end
   //     end
-      
   //     if userno ==1
   // //          [Ke,F0e,fe] = elem01(xe,de,de,nen,ndof,3);
   //             xe
@@ -207,8 +204,6 @@ var FESolve = function(inputParameters){
   //         disp('Element not found')
   //         pause
   //     end
-      
-      
   //     // assemble local element array into system array
   //     for i =1:nen*ndof
   //         for j=1: nen*ndof
@@ -219,6 +214,35 @@ var FESolve = function(inputParameters){
   //     end
   // end
   // Fr = -Fr;
+
+  var K = []; //numnp*ndof , nmnp*ndof
+  var Fo = []; //numnp*ndof
+  var Fr = []; //numnp*ndof
+  for(i = 0; i < numnp*ndof; i++){
+    var Kinner =[];
+    for(var j = 0; j < numnp*ndof; j++){
+      Kinner.push(0);
+    }
+    K.push(Kinner);
+    Fo.push(0);
+    Fr.push(0);
+  }
+  var xe = [[0,0],[0,0]];
+
+  for(var e=0;e < nume1; e++){
+    for(i = 0 ; i <= nen; i++){
+      for(j = 0 ; j <= ndm ; j++){
+        xe[i][j] = x[elem[e][i]-1][j];
+      }
+    }
+    ////[Ke,F0e,fe] = elem02(xe,de,de,nen,ndof,3);
+    // console.log(inputParameters.materialProperties[elem[e,2]])
+    elemSolve(xe, inputParameters.materialProperties[elem[e][2]-1], inputParameters.materialProperties, nen, ndof, 3);
+
+  }
+
+
+
 
   // // form reduced stiffness and lod vector
   // for i=1: nact

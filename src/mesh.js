@@ -53,6 +53,18 @@ var InputParameters = function(){
     height: 10,
     t1: 0,
     t2:0
+  },
+  {
+    E: 29000, 
+    area: 3,
+    wx: 0,
+    wy: -.2,
+    to: 80,
+    alpha: 0.0000065,
+    moment: 285,
+    height: 10,
+    t1: 100,
+    t2: 60
   }];
 
    
