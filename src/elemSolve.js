@@ -95,7 +95,8 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
 
   Btranspose.multiply(ke);
   Btranspose.multiply(B)
-  foe.multiply(BtransposeLoad);
+  // foe.multiply(BtransposeLoad);
+  BtransposeLoad.multiply(foe);
   return [Btranspose.getMatrix(),foe.getMatrix(),0];
 };
 

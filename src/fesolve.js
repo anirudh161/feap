@@ -240,18 +240,36 @@ var FESolve = function(inputParameters){
       for(j = 0; j < (nen+1)*ndof; j++){
         K[id[e][i]-1][id[e][j]-1] = K[id[e][i]-1][id[e][j]-1] + localMatrices[0][i][j];
       }
+      F[id[e][i]-1] = F[id[e][i]-1] - localMatrices[1][i];
+      Fr[id[e][i]-1] = Fr[id[e][i]-1] - localMatrices[1][i];
     }
   }
+  Fr = new MatrixUtil(Fr);
+  Fr.scalarMultiply(-1);
 
-
-
-  // // form reduced stiffness and lod vector
+  // form reduced stiffness and lod vector
   // for i=1: nact
   //     for j =1: nact
   //         Kff(i,j) = K(aib(i),aib(j));
   //     end
   //     Ff(i) = F(aib(i));
   // end
+  var Ff = [];
+  var Kff = [];
+  for(i = 0; i < nact ; i++){
+    Kff.push([]);
+    for(j = 0; j < nact ; j++){
+      Kff[i].push(0);
+    }
+    Ff[i] = 0;
+  }
+  for(i = 0; i < nact ; i++){
+    for(j = 0; j < nact ; j++){
+      Kff[i][j] = K[aib[i],aib[j]];
+    }
+    Ff[i] = F[aib[i]];
+  }
+  debugger;
 
   // // form reduced stiffness matrix and load vector for non-zero displacement
   // if dispflg ==1
