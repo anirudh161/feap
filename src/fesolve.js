@@ -235,27 +235,13 @@ var FESolve = function(inputParameters){
         xe[i][j] = x[elem[e][i]-1][j];
       }
     }
-  var localMatrices = elemSolve(xe, inputParameters.materialProperties[elem[e][2]-1], inputParameters.materialProperties, nen, ndof, 3);
-
-  for(i = 0 ; i < nen*ndof ; i++){
-    
+    var localMatrices = elemSolve(xe, inputParameters.materialProperties[elem[e][2]-1], inputParameters.materialProperties, nen, ndof, 3);
+    for(i = 0 ; i < (nen+1)*ndof ; i++){
+      for(j = 0; j < (nen+1)*ndof; j++){
+        K[id[e][i]-1][id[e][j]-1] = K[id[e][i]-1][id[e][j]-1] + localMatrices[0][i][j];
+      }
+    }
   }
-
-  //     for i =1:nen*ndof
-  //         for j=1: nen*ndof
-  //             K(id(e,i),id(e,j)) = K(id(e,i),id(e,j)) + Ke(i,j);
-  //         end
-  //             F(id(e,i)) = F(id(e,i)) - F0e(i);
-  //             Fr(id(e,i)) = Fr(id(e,i))-F0e(i);
-  //     end
-  // end
-  // Fr = -Fr;
-  }
-
-
-
-
-
 
 
 

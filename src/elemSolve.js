@@ -80,6 +80,7 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
         [0,   0,  0, 0,   0,  1]
     ]
   );
+
   var Btranspose = new MatrixUtil(B.getMatrix());
   Btranspose.transpose();
   var BtransposeLoad = new MatrixUtil(Btranspose.getMatrix());
@@ -91,13 +92,11 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
   //     //initialize local element force vector (to avoid warning)
   //     fe = 0;
   //form global element stiffness matrix
-  Btranspose.multiply(B)
+
   Btranspose.multiply(ke);
-  var Ke = Btranspose.getMatrix();
+  Btranspose.multiply(B)
   foe.multiply(BtransposeLoad);
-  var Foe = foe.getMatrix();
-  var fe = 0;
-  return [Ke,Foe,fe];
+  return [Btranspose.getMatrix(),foe.getMatrix(),0];
 };
 
 
