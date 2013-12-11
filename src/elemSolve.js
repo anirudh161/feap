@@ -81,23 +81,39 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
     ]
   );
 
-  var Btranspose = new MatrixUtil(B.getMatrix());
-  Btranspose.transpose();
-  var BtransposeLoad = new MatrixUtil(Btranspose.getMatrix());
+  if(isw===3){
+    var Btranspose = new MatrixUtil(B.getMatrix());
+    Btranspose.transpose();
+    var BtransposeLoad = new MatrixUtil(Btranspose.getMatrix());
 
-  //     //form global element stiffness matrix
-  //     Ke = B'*ke*B;
-  //     //form global element load vector
-  //     F0e = B'*f0e;
-  //     //initialize local element force vector (to avoid warning)
-  //     fe = 0;
-  //form global element stiffness matrix
+    //     //form global element stiffness matrix
+    //     Ke = B'*ke*B;
+    //     //form global element load vector
+    //     F0e = B'*f0e;
+    //     //initialize local element force vector (to avoid warning)
+    //     fe = 0;
+    //form global element stiffness matrix
 
-  Btranspose.multiply(ke);
-  Btranspose.multiply(B)
-  // foe.multiply(BtransposeLoad);
-  BtransposeLoad.multiply(foe);
-  return [Btranspose.getMatrix(),foe.getMatrix(),0];
+    Btranspose.multiply(ke);
+    Btranspose.multiply(B)
+    // foe.multiply(BtransposeLoad);
+    BtransposeLoad.multiply(foe);
+    return [Btranspose.getMatrix(),foe.getMatrix(),0];
+  } else{
+
+    //fe = ke*B*U' + F0e;
+    //Ke = 0;
+    //F0e = 0;
+
+    var mU = new MatrixUtil([u]);
+    ke.multiply(B);
+    mU.transpose();
+    ke.multiply(mU);
+    // foe.transpose();
+    ke.add(foe);
+    return ke.getMatrix();
+
+  }
 };
 
 

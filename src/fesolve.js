@@ -244,7 +244,7 @@ var FESolve = function(inputParameters){
       Fr[id[e][i]-1] = Fr[id[e][i]-1] - localMatrices[1][i];
     }
   }
-  Fr = new MatrixUtil(Fr);
+  Fr = new MatrixUtil([Fr]);
   Fr.scalarMultiply(-1);
 
   // form reduced stiffness and lod vector
@@ -265,11 +265,11 @@ var FESolve = function(inputParameters){
   }
   for(i = 0; i < nact ; i++){
     for(j = 0; j < nact ; j++){
-      Kff[i][j] = K[aib[i],aib[j]];
+      Kff[i][j] = K[aib[i]][aib[j]];
     }
     Ff[i] = F[aib[i]];
   }
-  debugger;
+
 
   // // form reduced stiffness matrix and load vector for non-zero displacement
   // if dispflg ==1
@@ -282,7 +282,25 @@ var FESolve = function(inputParameters){
   //         Ur(i) = D(aid(i));
   //     end
   // end
+  var Ur = [];
+  var Kfr = [];
+  for(i = 0; i < nact; i++){
+    Kfr.push([]);
+    for(j = 0; j < ndsp ; j++){
+      Kfr[i].push(0);
+    }
+  }
 
+  if(dispflg){
+    for(i = 0; i < nact; i++){
+      for(j = 0; j < ndsp ; j++){
+        Kfr[i][j] = K[aib[i]][aid[j]];
+      }
+    }
+    for(i = 0; i < ndsp ; i++){
+      Ur[i] = dArr[aid[i]];
+    }
+  }
 
   // //  solve for the unknown displacement
   // if dispflg ==0
@@ -290,7 +308,23 @@ var FESolve = function(inputParameters){
   // elseif dispflg ==1
   //     Uf = Kff\(Ff' - Kfr*Ur');
   // end
-
+  var mKff = new MatrixUtil(Kff);
+  var mFf = new MatrixUtil([Ff]);
+  var mKfr = new MatrixUtil(Kfr);
+  var mUr = new MatrixUtil([Ur]);
+  if(dispflg===0){
+    mKff.inverse();
+    mFf.transpose();
+    mKff.multiply(mFf);
+  } else{
+    mUr.transpose();
+    mKfr.multiply(mUr);
+    mFf.transpose();
+    mFf.subtract(mKfr);
+    mKff.inverse();
+    mKff.multiply(mFf);
+    var Uf = mKff.getMatrix();
+  }
 
   // // map displacements to element nodes
   // for i=1:numnp*ndof
@@ -304,6 +338,20 @@ var FESolve = function(inputParameters){
   //         U(aid(i)) = Ur(i);
   //     end 
   // end
+  var U = [];
+  for(var i = 0; i < numnp*ndof ; i++){
+    U.push(0);
+  }
+  for(var i = 0; i < nact ; i++){
+    U[aib[i]] = Uf[i][0];
+  }
+  if(dispflg){
+    for(var i = 0; i < ndsp; i++){
+      U[aid[i]] = Ur[i];
+    }
+  }
+  
+
 
   // j=1;
   // for e=1:numnp
@@ -312,8 +360,18 @@ var FESolve = function(inputParameters){
   //     U1(3,e) = U(1,j+2);
   //     j=j+3;
   // end
-    
-
+  // j=1;
+  var U1 = [];
+  for(var i = 0; i < 3; i++){
+    U1.push([]);
+  }
+  var k = 0 ;
+  for(var i = 0; i < numnp; i++){
+    U1[0][i] = U[k];
+    U1[1][i] = U[k+1];
+    U1[2][i] = U[k+2];
+    k = k+3;
+  }
 
   // for e=1:nume1
   //     j=1;
@@ -326,12 +384,76 @@ var FESolve = function(inputParameters){
   //     end
   //     j=1;
   // end
-  // Ue1;
+  var Ue = [];
+  var Ue1 = [];
+  for(var e = 0; e < nume1; e++){
+    j = 0;
+    if(!Ue[e]){
+      Ue.push([])
+    }
+    if(!Ue1[e]){
+      Ue1.push([]);
+    }
+    for(var i = 0; i < nen+1; i++){
+
+      if(!Ue1[j]){
+        Ue1.push([])
+      }
+      if(!Ue1[j+1]){
+        Ue1.push([])
+      }
+      if(!Ue1[j+2]){
+        Ue1.push([])
+      }
+
+      Ue[e][i] = U[elem[e][i]-1];
+      Ue1[j][e] = U1[0][elem[e][i]-1];
+      Ue1[j+1][e] = U1[1][elem[e][i]-1];
+      Ue1[j+2][e] = U1[2][elem[e][i]-1];
+      j += 3;
+    }
+    j=1;
+  }
+
   // G = U'-D;
-  // a=K*G;
-  // b=K*D;
-  // reactions = K*D + K*G+Fr;
+  var mU = new MatrixUtil([U]);
+  var mD = new MatrixUtil([dArr]);
+  mU.subtract(mD);
 
+  var K2 = [];
+  for(var i = 0; i < K.length; i++){
+    K2.push([]);
+    for(var j = 0; j < K[0].length; j++){
+      K2[i].push(K[i][j]);
+    }
+  }
+  var mK2 = new MatrixUtil(K2);
+  var mK = new MatrixUtil(K);
 
+  // reactions = K*D + K*G + Fr;
+  
+  mD.transpose()
+  mK.multiply(mD);
+  mU.transpose();
+  mK2.multiply(mU);
+  mK.add(mK2);
+  Fr.transpose();
+  mK.add(Fr);
+
+  var obj = {
+    U: U,
+    Ue1: Ue1,
+    nume1: nume1,
+    nen: nen,
+    reactions: mK.getMatrix()
+  }
+
+  return obj;
 }
+
+
+
+
+
+
 
