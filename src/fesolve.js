@@ -350,7 +350,7 @@ var FESolve = function(inputParameters){
       U[aid[i]] = Ur[i];
     }
   }
-  
+
 
 
   // j=1;
@@ -372,6 +372,7 @@ var FESolve = function(inputParameters){
     U1[2][i] = U[k+2];
     k = k+3;
   }
+  
 
   // for e=1:nume1
   //     j=1;
@@ -415,6 +416,12 @@ var FESolve = function(inputParameters){
     j=1;
   }
 
+  var uCopy = [];
+  for(var i = 0 ; i < U.length; i++){
+    uCopy.push(U[i]);
+  }
+
+
   // G = U'-D;
   var mU = new MatrixUtil([U]);
   var mD = new MatrixUtil([dArr]);
@@ -440,8 +447,10 @@ var FESolve = function(inputParameters){
   Fr.transpose();
   mK.add(Fr);
 
+
+
   var obj = {
-    U: U,
+    U: uCopy,
     Ue1: Ue1,
     nume1: nume1,
     nen: nen,

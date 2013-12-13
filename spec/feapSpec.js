@@ -22,6 +22,7 @@ var returnArguments = function(){ return arguments; };
                                    [2, 4, 1],
                                    [3, 4, 2],
                                    [4, 5, 1]]);
+      calculate()
 
     })
 

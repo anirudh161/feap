@@ -1,23 +1,12 @@
 
-var calculate = function(){
-
-  var inputParameters = new InputParameters();
-
-  //[U,Ue1,nume1,nen,mK.getMatrix()]
-  var output = FESolve(inputParameters);
-  // (Ue,x,elem,d,ndof,userno)
-
-  var forces = FEStress(output.Ue1,inputParameters.x,inputParameters.elem,inputParameters.materialProperties,3,2);
-  console.log(forces);
+var FEAP = function(){
+  this.inputParameters = new InputParameters();
 };
-calculate();
+
+FEAP.prototype.solve = function(){
+  var output = FESolve(this.inputParameters);
+  output.force = FEStress(output.Ue1,this.inputParameters.x,this.inputParameters.elem,this.inputParameters.materialProperties,3,2);
+  return output;
+}
 
 
-
-  // var obj = {
-  //   U: U,
-  //   Ue1: Ue1,
-  //   nume1: nume1,
-  //   nen: nen,
-  //   K: mK.getMatrix()
-  // }

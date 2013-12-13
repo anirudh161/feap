@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FEAP</title>
+
+    <script src="matrixUtil/src/matrixUtil.js"></script>
+    <script src="src/mesh.js"></script>
+    <script src="src/festress.js"></script>
+    <script src="src/elemSolve.js"></script>
+    <script src="src/fesolve.js"></script>
+    <script src="src/feap.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script>
+    var output = solve();
+
+    var surface = d3.select('.container').append('svg:svg').attr('class','container').attr('width',window.innerWidth).attr('height',window.innerHeight);
+    
+
+
+  </script>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>One Graph</title>
+    <script type="text/javascript" src="lib/d3.v3.js"></script>
+    <script src="matrixUtil/src/matrixUtil.js"></script>
+    <script src="src/mesh.js"></script>
+    <script src="src/festress.js"></script>
+    <script src="src/elemSolve.js"></script>
+    <script src="src/fesolve.js"></script>
+    <script src="src/feap.js"></script>
+  </head>
+  <body>
+    <div class="chart"></div>
+    <script type="text/javascript">
+      var feap = new FEAP();
+      var results = feap.solve();
+      var surface = d3.select('.chart').append('svg:svg').attr('class','surface').attr('width',800).attr('height',600);
+      var nodes;
+      var nodeData = [];
+      
+      var createNodes = function(n){
+        var activeNodes = [];
+        for(var i = 0 ; i < n; i++){
+          activeNodes.push(i);
+          nodeData.push({
+            id: i,
+            x: feap.inputParameters.x[i][0],
+            y: feap.inputParameters.x[i][1]
+          });
+        }
+        nodes = surface.selectAll('nodes').data(nodeData, function(e){return e.id;});
+        nodes.enter().append('svg:circle').attr('class','node')
+                        .attr('cx',function(e){return e.x+200;})
+                        .attr('cy',function(e){return -e.y+200;})
+                        .attr('r',5);
+      };
+
+      var createElements = function(){
+        for(var i = 0 ; i < feap.inputParameters.elem.length; i++){
+
+          var myLine = surface.append("svg:line")
+            .attr("x1", feap.inputParameters.x[feap.inputParameters.elem[i][0]-1][0]+200)
+            .attr("y1", -feap.inputParameters.x[feap.inputParameters.elem[i][0]-1][1]+200)
+            .attr("x2", feap.inputParameters.x[feap.inputParameters.elem[i][1]-1][0]+200)
+            .attr("y2", -feap.inputParameters.x[feap.inputParameters.elem[i][1]-1][1]+200)
+            .style("stroke", "rgb(6,120,155)");
+        }
+      }
+
+      var createDeflectedElements = function(){
+        for(var i = 0 ; i < feap.inputParameters.elem.length; i++){
+
+          var myLine = surface.append("svg:line")
+            .attr("x1", feap.inputParameters.x[feap.inputParameters.elem[i][0]-1][0]+200+200*results.U[(feap.inputParameters.elem[i][0]-1)*3])
+            .attr("y1", -feap.inputParameters.x[feap.inputParameters.elem[i][0]-1][1]+200-200*results.U[(feap.inputParameters.elem[i][0]-1)*3+1])
+            .attr("x2", feap.inputParameters.x[feap.inputParameters.elem[i][1]-1][0]+200+200*results.U[(feap.inputParameters.elem[i][1]-1)*3])
+            .attr("y2", -feap.inputParameters.x[feap.inputParameters.elem[i][1]-1][1]+200-200*results.U[(feap.inputParameters.elem[i][1]-1)*3+1])
+            .style("stroke", "rgb(6,120,155)");
+        }
+      }
+
+      var createDeflectedNodes = function(n){
+        var activeNodes = [];
+        for(var i = 0 ; i < n; i++){
+          activeNodes.push(i);
+          nodeData.push({
+            id: i,
+            x: feap.inputParameters.x[i][0]+200*results.U[i*3],
+            y: feap.inputParameters.x[i][1]+200*results.U[i*3+1]
+          });
+        }
+        nodes = surface.selectAll('nodes').data(nodeData, function(e){return e.id;});
+        nodes.enter().append('svg:circle').attr('class','node')
+                        .attr('cx',function(e){return e.x+200;})
+                        .attr('cy',function(e){return -e.y+200;})
+                        .attr('r',5);
+      };
+
+      createDeflectedNodes();
+      createDeflectedElements();
+      createElements()
+      createNodes(feap.inputParameters.x.length);
+
+    </script>
+  </body>
+</html>
+
+
+
+
+

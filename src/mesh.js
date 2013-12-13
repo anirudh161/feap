@@ -31,7 +31,10 @@ var InputParameters = function(){
   // elem = [1 2 1
   //         2 3 1
   //         1 3 1];
-  this.elem = [[1, 3, 1],[2, 4, 1],[3, 4, 2],[4, 5, 1]];
+  this.elem = [[1, 3, 1],
+                [2, 4, 1],
+                [3, 4, 2],
+                [4, 5, 1]];
 
 
   // define the material properties d(i,j) where 
@@ -82,11 +85,15 @@ var InputParameters = function(){
       
    // define the nodal forces fc (i,j) where
    // Node, x force, y force, moment
-   this.fc = [[4, 0, 2, 0]];
+   this.fc = [[4, 0, -2, 0]];
    
    // define nodal displacements dc (i ,j) where
    // Node, x disp, ydisp, rotation
-   this.dc = [[1, 0, 0, -.01],
+   // this.dc = [[1, 0, 0, 0],
+   //            [3, 0, 0, 0],
+   //            [5, 0, 0, 0]];
+
+    this.dc = [[1, 0, 0, -.01],
               [3, 0, .2, 0],
               [5, .1, 0, 0]];
    
