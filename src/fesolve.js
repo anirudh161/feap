@@ -29,6 +29,7 @@ var FESolve = function(inputParameters){
     dArr.push(0);
   }
 
+
   // //  define Id array
   // for e =1 : nume1
   //     k = 0;
@@ -151,7 +152,7 @@ var FESolve = function(inputParameters){
     }
     ndsp = aid.length;
   }
-  dArr.shift()
+
 
   // // set nodal forces 
   // F = zeros(numnp*ndof,1);
@@ -425,6 +426,7 @@ var FESolve = function(inputParameters){
   // G = U'-D;
   var mU = new MatrixUtil([U]);
   var mD = new MatrixUtil([dArr]);
+
   mU.subtract(mD);
 
   var K2 = [];
