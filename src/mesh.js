@@ -145,8 +145,7 @@ var InputParameters = function(){
 
    // define the nodal forces fc (i,j) where
    // Node, x force, y force, moment
-   this.fc = [[numColumns*numRows, 120, 0, 0],
-   [numColumns*numRows-6, 120, 0, 0]];
+   this.fc = [[numColumns*numRows-3, 600, 0, 0]];
    
    
    // define nodal displacements dc (i ,j) where
