@@ -21,13 +21,7 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
   var dTo = Tav - To;
   var dT = T1-T2;
 
-  // //form local element stiffness matrix
-  // ke = [EA/L     0             0          -EA/L   0             0
-  //       0        12*E*I/L^3    6*E*I/L^2  0      -12*E*I/L^3    6*E*I/L^2
-  //       0        6*E*I/L^2     4*E*I/L    0      -6*E*I/L^2     2*E*I/L
-  //       -E*A/L   0             0          E*A/L   0             0
-  //       0       -12*E*I/L^3   -6*E*I/L^2  0       12*E*I/L^3    -6*E*I/L^2
-  //       0        6*E*I/L^2     2*E*I/L    0      -6*E*I/L^2      4*E*I/L];
+  //Form local stiffness matrix
   var ke = new MatrixUtil(
       [
         [E*A/L,  0,             0,          -E*A/L,  0,             0],
@@ -39,13 +33,7 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
       ]
     );
 
-  // //form local element load vector
-  // f0e = [(-c1+ E*A*alpha*dTo)
-  //         -c2
-  //         (-wy*L*L/12 -E*I*alpha*dT/h)
-  //         (-c1 - E*A*alpha*dTo)
-  //         -c2
-  //         (wy*L*L/12 + E*I*alpha*dT/h)];
+  //form local element load vector
   var foe = new MatrixUtil( 
                             [
                               [(-c1+ E*A*alpha*dTo)],
@@ -56,16 +44,6 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
                               [(wy*L*L/12 + E*I*alpha*dT/h)]
                             ]
                           );
-      
-  // cn = dx/L;
-  // sn = dy/L;
-  // //form element transformation matrix
-  // B = [cn sn 0 0   0 0 
-  //     -sn cn 0 0   0 0
-  //       0  0 1 0   0 0 
-  //       0  0 0 cn  sn 0
-  //       0  0 0 -sn cn 0
-  //       0 0  0  0  0 1];
 
   var cn = dx/L;
   var sn = dy/L;
@@ -81,38 +59,22 @@ var elemSolve = function(x, d, u, nen, ndof, isw){
     ]
   );
 
+  //form global element stiffness matrix
   if(isw===3){
     var Btranspose = new MatrixUtil(B.getMatrix());
     Btranspose.transpose();
     var BtransposeLoad = new MatrixUtil(Btranspose.getMatrix());
-
-    //     //form global element stiffness matrix
-    //     Ke = B'*ke*B;
-    //     //form global element load vector
-    //     F0e = B'*f0e;
-    //     //initialize local element force vector (to avoid warning)
-    //     fe = 0;
-    //form global element stiffness matrix
-
     Btranspose.multiply(ke);
     Btranspose.multiply(B)
-    // foe.multiply(BtransposeLoad);
     BtransposeLoad.multiply(foe);
     return [Btranspose.getMatrix(),foe.getMatrix(),0];
   } else{
-
-    //fe = ke*B*U' + F0e;
-    //Ke = 0;
-    //F0e = 0;
-
     var mU = new MatrixUtil([u]);
     ke.multiply(B);
     mU.transpose();
     ke.multiply(mU);
-    // foe.transpose();
     ke.add(foe);
     return ke.getMatrix();
-
   }
 };
 
